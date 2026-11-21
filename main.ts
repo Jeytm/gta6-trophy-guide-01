@@ -20,22 +20,22 @@ import { buildDossier } from './vendor/makefun-frontend.ts';
 const repoRoot = fileURLToPath(new URL('.', import.meta.url));
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-function fail(message) {
+function abort(message) {
   throw new Error(message);
 }
 
-function requireFile(rel) {
+function mustExist(rel) {
   const path = join(repoRoot, rel);
-  if (!existsSync(path) || !statSync(path).isFile()) fail(`missing required file: ${rel}`);
+  if (!existsSync(path) || !statSync(path).isFile()) abort(`missing required file: ${rel}`);
   return path;
 }
 
-function loadTrophies() {
-  const path = requireFile('app/data/trophies.json');
+function readTrophies() {
+  const path = mustExist('app/data/trophies.json');
   const doc = JSON.parse(readFileSync(path, 'utf8'));
   const list = Array.isArray(doc) ? doc : doc.trophies;
   if (!Array.isArray(list) || list.length < 55) {
-    fail(`trophies.json names ${Array.isArray(list) ? list.length : 0} trophies, expected at least 55`);
+    abort(`trophies.json names ${Array.isArray(list) ? list.length : 0} trophies, expected at least 55`);
   }
   return list;
 }
@@ -44,28 +44,40 @@ function loadTrophies() {
 // a non-blank guide each — the gate would refuse the entry for it, and a
 // clear message here beats a silent rejection there.
 function checkGuides(list) {
-  const bad = list.filter((t) => {
-    if (!t || typeof t.name !== 'string' || !t.name.trim()) return true;
-    return typeof t.guide !== 'string' || !t.guide.trim();
-  });
-  if (bad.length > 0) fail(`trophies.json has ${bad.length} trophies with no name or no guide`);
+  const bad = [];
+  for (const t of list) {
+    const okName = t && typeof t.name === 'string' && t.name.trim() !== '';
+    const okGuide = t && typeof t.guide === 'string' && t.guide.trim() !== '';
+    if (!okName || !okGuide) bad.push(t);
+  }
+  if (bad.length > 0) abort(`trophies.json has ${bad.length} trophies with no name or no guide`);
 }
 
-function checkScreenshots() {
+function checkShots() {
   const dir = join(repoRoot, 'screenshots');
-  if (!existsSync(dir) || !statSync(dir).isDirectory()) fail('missing screenshots/ folder');
-  const shots = readdirSync(dir).filter((f) => !f.startsWith('.') && statSync(join(dir, f)).isFile());
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) abort('missing screenshots/ folder');
+  const shots = [];
+  for (const f of readdirSync(dir)) {
+    if (f.startsWith('.')) continue;
+    if (statSync(join(dir, f)).isFile()) shots.push(f);
+  }
   if (shots.length < 3 || shots.length > 4) {
-    fail(`screenshots/ holds ${shots.length} images, expected 3 or 4`);
+    abort(`screenshots/ holds ${shots.length} images, expected 3 or 4`);
+  }
+  // The gate caps each screenshot at 256 KiB — refuse an oversized one
+  // here with a clear message instead of failing at the gate.
+  for (const f of shots) {
+    const size = statSync(join(dir, f)).size;
+    if (size > 262144) abort(`screenshot ${f} is ${size} bytes, over the 256 KiB cap`);
   }
   return shots;
 }
 
 function handIn() {
-  requireFile('app/index.html');
-  const list = loadTrophies();
+  mustExist('app/index.html');
+  const list = readTrophies();
   checkGuides(list);
-  checkScreenshots();
+  checkShots();
 
   mkdirSync(outDir, { recursive: true });
   cpSync(join(repoRoot, 'app'), join(outDir, 'app'), { recursive: true });

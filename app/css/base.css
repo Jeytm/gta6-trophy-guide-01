@@ -2,34 +2,34 @@
    System fonts only: nothing is fetched over the network. */
 
 :root {
-  --page: #f6f3ee;
-  --panel: #ffffff;
-  --text: #1d2129;
-  --dim: #626a75;
-  --edge: #ddd6c9;
-  --ember: #d24e2a;
-  --ember-soft: #fbe9e2;
-  --ok: #2e7d4f;
-  --alert: #a33d00;
-  --alert-bg: #fdf0e4;
-  --pill-bg: #ece7db;
-  --shade: 0 1px 3px rgba(29, 33, 41, 0.12);
-  --round: 14px;
+  --bg: #f6f3ee;
+  --card: #ffffff;
+  --ink: #1d2129;
+  --muted: #626a75;
+  --line: #ddd6c9;
+  --accent: #d24e2a;
+  --accent-soft: #fbe9e2;
+  --good: #2e7d4f;
+  --warn: #a33d00;
+  --warn-bg: #fdf0e4;
+  --tag-bg: #ece7db;
+  --shadow: 0 1px 3px rgba(29, 33, 41, 0.12);
+  --radius: 14px;
 }
 
 [data-theme="night"] {
-  --page: #0f1218;
-  --panel: #171c24;
-  --text: #edeae4;
-  --dim: #8e96a3;
-  --edge: #2a3040;
-  --ember: #ff6b4a;
-  --ember-soft: #3a2320;
-  --ok: #6fbf8f;
-  --alert: #ffb37a;
-  --alert-bg: #33231a;
-  --pill-bg: #232936;
-  --shade: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --bg: #0f1218;
+  --card: #171c24;
+  --ink: #edeae4;
+  --muted: #8e96a3;
+  --line: #2a3040;
+  --accent: #ff6b4a;
+  --accent-soft: #3a2320;
+  --good: #6fbf8f;
+  --warn: #ffb37a;
+  --warn-bg: #33231a;
+  --tag-bg: #232936;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -38,8 +38,8 @@
 
 body {
   margin: 0;
-  background: var(--page);
-  color: var(--text);
+  background: var(--bg);
+  color: var(--ink);
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.45;
@@ -59,7 +59,7 @@ h3 {
   align-items: center;
   gap: 24px;
   padding: 16px 24px 12px;
-  border-bottom: 2px solid var(--ember);
+  border-bottom: 2px solid var(--accent);
 }
 
 .wordmark {
@@ -72,7 +72,7 @@ h3 {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: var(--ember);
+  background: var(--accent);
   color: #fff;
   display: flex;
   align-items: center;
@@ -90,7 +90,7 @@ h3 {
 
 .tagline {
   margin: 2px 0 0;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -107,12 +107,12 @@ h3 {
 
 .count .of {
   font-size: 16px;
-  color: var(--dim);
+  color: var(--muted);
 }
 
 .meter {
   height: 10px;
-  background: var(--pill-bg);
+  background: var(--tag-bg);
   border-radius: 6px;
   overflow: hidden;
   margin-top: 4px;
@@ -121,19 +121,19 @@ h3 {
 .meter-fill {
   height: 100%;
   width: 0%;
-  background: var(--ember);
+  background: var(--accent);
   transition: width 0.3s;
 }
 
 .note {
   margin: 4px 0 0;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 12px;
 }
 
 .grades {
   margin: 2px 0 0;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 11px;
 }
 
@@ -145,37 +145,37 @@ h3 {
   gap: 8px;
   align-items: center;
   padding: 10px 24px;
-  border-bottom: 1px solid var(--edge);
+  border-bottom: 1px solid var(--line);
 }
 
 .controls input[type="search"] {
   flex: 1 1 200px;
   padding: 8px 10px;
-  border: 1px solid var(--edge);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--panel);
-  color: var(--text);
+  background: var(--card);
+  color: var(--ink);
   font-size: 14px;
 }
 
 .controls select,
 .controls button {
   padding: 8px 10px;
-  border: 1px solid var(--edge);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--panel);
-  color: var(--text);
+  background: var(--card);
+  color: var(--ink);
   font-size: 13px;
   cursor: pointer;
 }
 
 .controls button:hover,
 .controls select:hover {
-  border-color: var(--ember);
+  border-color: var(--accent);
 }
 
 .controls button.risky {
-  color: var(--alert);
+  color: var(--warn);
 }
 
 .switch {
@@ -195,16 +195,16 @@ h3 {
 .kind-chip {
   padding: 6px 10px;
   border-radius: 20px;
-  border: 1px solid var(--edge);
-  background: var(--pill-bg);
-  color: var(--text);
+  border: 1px solid var(--line);
+  background: var(--tag-bg);
+  color: var(--ink);
   font-size: 12px;
   cursor: pointer;
 }
 
 .kind-chip.active {
-  background: var(--ember);
-  border-color: var(--ember);
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 
@@ -214,14 +214,14 @@ h3 {
   display: flex;
   gap: 4px;
   padding: 0 24px;
-  border-bottom: 1px solid var(--edge);
+  border-bottom: 1px solid var(--line);
 }
 
 .views-nav button {
   padding: 10px 16px;
   border: none;
   background: none;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -229,8 +229,8 @@ h3 {
 }
 
 .views-nav button.active {
-  color: var(--text);
-  border-bottom-color: var(--ember);
+  color: var(--ink);
+  border-bottom-color: var(--accent);
 }
 
 main {
@@ -256,7 +256,7 @@ main {
 
 .list-count {
   margin: 0 0 10px;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -273,21 +273,21 @@ main {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  background: var(--panel);
-  border: 1px solid var(--edge);
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 8px 12px;
   cursor: pointer;
-  box-shadow: var(--shade);
+  box-shadow: var(--shadow);
 }
 
 .trophy-row:hover {
-  border-color: var(--ember);
+  border-color: var(--accent);
 }
 
 .trophy-row.selected {
-  border-color: var(--ember);
-  outline: 2px solid var(--ember-soft);
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-soft);
 }
 
 .trophy-row.earned {
@@ -298,7 +298,7 @@ main {
   margin-top: 3px;
   width: 17px;
   height: 17px;
-  accent-color: var(--ember);
+  accent-color: var(--accent);
   flex: none;
 }
 
@@ -313,12 +313,12 @@ main {
 }
 
 .trophy-title .hidden-note {
-  color: var(--alert);
+  color: var(--warn);
   font-weight: 600;
 }
 
 .trophy-blurb {
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
   margin-top: 1px;
 }
@@ -334,21 +334,21 @@ main {
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 10px;
-  background: var(--pill-bg);
-  color: var(--dim);
+  background: var(--tag-bg);
+  color: var(--muted);
   white-space: nowrap;
 }
 
 .pill.missable {
-  background: var(--alert-bg);
-  color: var(--alert);
+  background: var(--warn-bg);
+  color: var(--warn);
   font-weight: 700;
 }
 
 .pill.watch,
 .pill.unconfirmed {
-  background: var(--alert-bg);
-  color: var(--alert);
+  background: var(--warn-bg);
+  color: var(--warn);
 }
 
 .disc {
@@ -382,11 +382,11 @@ main {
 .guide-pane {
   position: sticky;
   top: 12px;
-  background: var(--panel);
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 14px 16px;
-  box-shadow: var(--shade);
+  box-shadow: var(--shadow);
 }
 
 .guide-pane h2 {
@@ -395,14 +395,14 @@ main {
 }
 
 .guide-meta {
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
   margin: 0 0 8px;
 }
 
 .target {
-  background: var(--ember-soft);
-  border-left: 3px solid var(--ember);
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
   padding: 8px 10px;
   border-radius: 0 8px 8px 0;
   font-size: 13px;
@@ -419,7 +419,7 @@ main {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--dim);
+  color: var(--muted);
 }
 
 .guide-pane ol.step-list {
@@ -436,7 +436,7 @@ main {
   margin: 0;
   padding-left: 18px;
   font-size: 12px;
-  color: var(--dim);
+  color: var(--muted);
 }
 
 .guide-pane ul.source-list li {
@@ -444,8 +444,8 @@ main {
 }
 
 .alert {
-  background: var(--alert-bg);
-  border: 1px solid var(--alert);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn);
   border-radius: 8px;
   padding: 9px 11px;
   font-size: 13px;
@@ -458,7 +458,7 @@ main {
 
 .notes label {
   font-size: 12px;
-  color: var(--dim);
+  color: var(--muted);
   display: block;
   margin-bottom: 4px;
 }
@@ -467,27 +467,27 @@ main {
   width: 100%;
   min-height: 52px;
   padding: 8px;
-  border: 1px solid var(--edge);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--page);
-  color: var(--text);
+  background: var(--bg);
+  color: var(--ink);
   font: inherit;
   font-size: 13px;
 }
 
 .empty {
-  color: var(--dim);
+  color: var(--muted);
 }
 
 /* ---- Roadmap ---- */
 
 .stage-card {
-  background: var(--panel);
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 11px 16px;
   margin-bottom: 10px;
-  box-shadow: var(--shade);
+  box-shadow: var(--shadow);
 }
 
 .stage-card h2 {
@@ -496,7 +496,7 @@ main {
 }
 
 .stage-card h2 .stage-meta {
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
   font-family: sans-serif;
   font-weight: 400;
@@ -504,7 +504,7 @@ main {
 
 .stage-card p {
   margin: 3px 0 8px;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -518,11 +518,11 @@ main {
   display: inline-flex;
   gap: 6px;
   align-items: center;
-  border: 1px solid var(--edge);
+  border: 1px solid var(--line);
   border-radius: 16px;
   padding: 4px 10px;
   font-size: 12px;
-  background: var(--page);
+  background: var(--bg);
   cursor: pointer;
 }
 
@@ -538,9 +538,9 @@ main {
 }
 
 .next-strip {
-  background: var(--ember-soft);
-  border: 1px solid var(--ember);
-  border-radius: var(--round);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
   padding: 10px 16px;
   margin-bottom: 12px;
 }
@@ -563,12 +563,12 @@ main {
 /* ---- Missables ---- */
 
 .miss-card {
-  background: var(--panel);
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 12px 16px;
   margin-bottom: 12px;
-  box-shadow: var(--shade);
+  box-shadow: var(--shadow);
 }
 
 /* The two lower missables cards sit side by side so all three cards
@@ -585,8 +585,8 @@ main {
 }
 
 .miss-card.alert {
-  border-color: var(--alert);
-  background: var(--alert-bg);
+  border-color: var(--warn);
+  background: var(--warn-bg);
 }
 
 .miss-card h2 {
@@ -618,11 +618,11 @@ main {
 }
 
 .plan-box {
-  background: var(--panel);
-  border: 1px solid var(--edge);
-  border-radius: var(--round);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 14px 16px;
-  box-shadow: var(--shade);
+  box-shadow: var(--shadow);
 }
 
 .plan-box h2 {
@@ -641,14 +641,14 @@ main {
 
 .kind-row .gauge {
   height: 8px;
-  background: var(--pill-bg);
+  background: var(--tag-bg);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .kind-row .gauge-fill {
   height: 100%;
-  background: var(--ember);
+  background: var(--accent);
 }
 
 .plan-steps {
@@ -665,7 +665,7 @@ main {
 
 footer {
   padding: 16px 24px 24px;
-  color: var(--dim);
+  color: var(--muted);
   font-size: 12px;
   max-width: 1100px;
 }

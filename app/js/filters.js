@@ -3,19 +3,31 @@
 // online. The game has no online trophies, so that filter honestly shows
 // an empty state instead of pretending otherwise.
 
+const KIND_TESTS = {
+  all: () => true,
+  story: (t) => t.kind === 'story',
+  missable: (t) => t.missable === 'yes' || t.missable === 'watch',
+  collectible: (t) => t.kind === 'collectible',
+  activity: (t) => t.kind === 'activity',
+  robbery: (t) => t.kind === 'robbery',
+  money: (t) => t.kind === 'money',
+  side: (t) => t.kind === 'side',
+  online: () => false,
+};
+
 export const KIND_DEFS = [
-  { id: 'all', label: 'All 55', test: () => true },
-  { id: 'story', label: 'Story', test: (t) => t.kind === 'story' },
-  { id: 'missable', label: 'Missable', test: (t) => t.missable === 'yes' || t.missable === 'watch' },
-  { id: 'collectible', label: 'Collectibles', test: (t) => t.kind === 'collectible' },
-  { id: 'activity', label: 'Activities', test: (t) => t.kind === 'activity' },
-  { id: 'robbery', label: 'Robberies', test: (t) => t.kind === 'robbery' },
-  { id: 'money', label: 'Money', test: (t) => t.kind === 'money' },
-  { id: 'side', label: 'Side quests', test: (t) => t.kind === 'side' },
-  { id: 'online', label: 'Online', test: () => false },
+  { id: 'all', label: 'All 55', test: KIND_TESTS.all },
+  { id: 'story', label: 'Story', test: KIND_TESTS.story },
+  { id: 'missable', label: 'Missable', test: KIND_TESTS.missable },
+  { id: 'collectible', label: 'Collectibles', test: KIND_TESTS.collectible },
+  { id: 'activity', label: 'Activities', test: KIND_TESTS.activity },
+  { id: 'robbery', label: 'Robberies', test: KIND_TESTS.robbery },
+  { id: 'money', label: 'Money', test: KIND_TESTS.money },
+  { id: 'side', label: 'Side quests', test: KIND_TESTS.side },
+  { id: 'online', label: 'Online', test: KIND_TESTS.online },
 ];
 
-const GRADE_NAMES = {
+const GRADE_LABELS = {
   platinum: 'Platinum',
   gold: 'Gold',
   silver: 'Silver',
@@ -25,7 +37,7 @@ const GRADE_NAMES = {
 const GRADE_ORDER = ['platinum', 'gold', 'silver', 'bronze'];
 
 export function gradeName(grade) {
-  return GRADE_NAMES[grade] ?? grade;
+  return GRADE_LABELS[grade] ?? grade;
 }
 
 export function kindName(kind) {
@@ -52,16 +64,20 @@ export function applyFilters(trophies, opts) {
 }
 
 // Per-grade earned tallies for the header line:
-// "Platinum 0/1 · Gold 0/2 · Silver 0/6 · Bronze 13/46".
+// "Platinum 0/1 · Gold 0/2 · Silver 0/6 · Bronze 14/46".
 export function gradeTallies(trophies, earned) {
-  return GRADE_ORDER.map((g) => {
-    const total = trophies.filter((t) => t.grade === g).length;
+  const lines = [];
+  for (const g of GRADE_ORDER) {
+    let total = 0;
     let done = 0;
     for (const t of trophies) {
-      if (t.grade === g && earned.has(t.id)) done += 1;
+      if (t.grade !== g) continue;
+      total += 1;
+      if (earned.has(t.id)) done += 1;
     }
-    return `${GRADE_NAMES[g]} ${done}/${total}`;
-  });
+    lines.push(`${GRADE_LABELS[g]} ${done}/${total}`);
+  }
+  return lines;
 }
 
 // The spoiler rule: with spoilers hidden, an unearned story trophy

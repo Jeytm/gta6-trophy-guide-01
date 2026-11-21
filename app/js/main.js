@@ -2,7 +2,7 @@
 // Loads data/trophies.json (same-origin, works offline), restores the
 // reader's progress and settings from localStorage, paints every view,
 // and wires the toolbar, the tabs and the guide pane. A ?demo=… parameter
-// seeds a fixed 13-of-55 progress set for screenshots only; a normal
+// seeds a fixed 14-of-55 progress set for screenshots only; a normal
 // visit never seeds anything.
 
 import { applyFilters, gradeTallies } from './filters.js';
@@ -14,39 +14,42 @@ import {
   getPrefs, setPrefs, downloadExport, readExport,
 } from './store.js';
 
-const DEMO_EARNED = [2, 3, 4, 8, 9, 10, 16, 20, 21, 32, 35, 53, 54];
+// Demo progress for screenshots: 14 of 55 earned, one per early story
+// beat plus a spread of activities, so the header, the checklist and
+// the roadmap all show real progress.
+const DEMO_EARNED = [2, 3, 4, 5, 8, 9, 10, 16, 20, 21, 32, 35, 53, 54];
 const NOTES_KEY = 'leonida-platinum-notes-v1';
 
-function $(id) {
+function byId(id) {
   return document.getElementById(id);
 }
 
-function collectNodes() {
+function grabNodes() {
   return {
-    search: $('search'),
-    chips: $('kind-chips'),
-    grade: $('grade-filter'),
-    spoiler: $('spoiler-toggle'),
-    hideEarned: $('hide-earned-toggle'),
-    theme: $('theme-toggle'),
-    exportBtn: $('export-btn'),
-    importBtn: $('import-btn'),
-    importFile: $('import-file'),
-    resetBtn: $('reset-btn'),
-    list: $('trophy-list'),
-    meta: $('list-meta'),
-    pane: $('guide-pane'),
-    count: $('earned-count'),
-    fill: $('progress-fill'),
-    note: $('progress-note'),
-    grades: $('grade-counts'),
+    search: byId('search'),
+    chips: byId('kind-chips'),
+    grade: byId('grade-filter'),
+    spoiler: byId('spoiler-toggle'),
+    hideEarned: byId('hide-earned-toggle'),
+    theme: byId('theme-toggle'),
+    exportBtn: byId('export-btn'),
+    importBtn: byId('import-btn'),
+    importFile: byId('import-file'),
+    resetBtn: byId('reset-btn'),
+    list: byId('trophy-list'),
+    meta: byId('list-meta'),
+    pane: byId('guide-pane'),
+    count: byId('earned-count'),
+    fill: byId('progress-fill'),
+    note: byId('progress-note'),
+    grades: byId('grade-counts'),
   };
 }
 
 async function boot() {
   const doc = await (await fetch('data/trophies.json')).json();
   const trophies = doc.trophies;
-  const nodes = collectNodes();
+  const nodes = grabNodes();
 
   // One state object for the whole page: what the reader earned, their
   // notes, their saved preferences, and this visit's transient choices.
@@ -60,9 +63,7 @@ async function boot() {
     tab: 'checklist',
   };
 
-  function pickedTrophy() {
-    return app.trophies.find((t) => t.id === app.picked) ?? null;
-  }
+  const pickedTrophy = () => app.trophies.find((t) => t.id === app.picked) ?? null;
 
   function visibleRows() {
     return applyFilters(app.trophies, {
@@ -74,7 +75,7 @@ async function boot() {
     });
   }
 
-  function paintHeader() {
+  function renderHeader() {
     const total = app.trophies.length;
     const done = app.earned.size;
     const pct = Math.round((done / total) * 100);
@@ -86,7 +87,7 @@ async function boot() {
     nodes.grades.textContent = gradeTallies(app.trophies, app.earned).join(' · ');
   }
 
-  function paintToolbar() {
+  function renderToolbar() {
     nodes.grade.value = app.prefs.grade;
     nodes.spoiler.checked = app.prefs.spoiler;
     nodes.hideEarned.checked = app.prefs.hideEarned;
@@ -99,7 +100,7 @@ async function boot() {
     });
   }
 
-  function showTab(tab) {
+  function switchTab(tab) {
     app.tab = tab;
     for (const b of document.querySelectorAll('.views-nav button')) {
       b.classList.toggle('active', b.dataset.view === tab);
@@ -110,8 +111,8 @@ async function boot() {
   }
 
   function refresh() {
-    paintHeader();
-    paintToolbar();
+    renderHeader();
+    renderToolbar();
     paintList(nodes.list, nodes.meta, visibleRows(), {
       earned: app.earned,
       spoilerOn: app.prefs.spoiler,
@@ -135,18 +136,16 @@ async function boot() {
         app.notes = getNotes();
       },
     });
-    paintRoadmap($('roadmap-view'), app.trophies, app.earned, (id) => {
+    paintRoadmap(byId('roadmap-view'), app.trophies, app.earned, (id) => {
       app.picked = id;
-      showTab('checklist');
+      switchTab('checklist');
       refresh();
     });
-    paintMissables($('missables-view'), app.trophies);
-    paintPlanner($('planner-view'), app.trophies, app.earned);
+    paintMissables(byId('missables-view'), app.trophies);
+    paintPlanner(byId('planner-view'), app.trophies, app.earned);
   }
 
-  function savePrefs() {
-    setPrefs(app.prefs);
-  }
+  const savePrefs = () => setPrefs(app.prefs);
 
   nodes.search.addEventListener('input', () => {
     app.query = nodes.search.value;
@@ -200,32 +199,32 @@ async function boot() {
   });
   for (const b of document.querySelectorAll('.views-nav button')) {
     b.addEventListener('click', () => {
-      showTab(b.dataset.view);
+      switchTab(b.dataset.view);
       refresh();
     });
   }
 
-  seedDemo(app, showTab);
+  seedDemo(app, switchTab);
   refresh();
 }
 
 // Demo states for screenshots (?demo=cover|roadmap|missables|spoiler).
 // They only ever run when the parameter is present in the URL.
-function seedDemo(app, showTab) {
+function seedDemo(app, switchTab) {
   const demo = new URLSearchParams(location.search).get('demo');
   if (!demo) return;
   app.earned = new Set(DEMO_EARNED);
   if (demo === 'cover') {
     app.picked = 28;
-    showTab('checklist');
+    switchTab('checklist');
   } else if (demo === 'roadmap') {
-    showTab('roadmap');
+    switchTab('roadmap');
   } else if (demo === 'missables') {
-    showTab('missables');
+    switchTab('missables');
   } else if (demo === 'spoiler') {
     app.prefs.spoiler = true;
     app.picked = 35;
-    showTab('checklist');
+    switchTab('checklist');
   }
 }
 
