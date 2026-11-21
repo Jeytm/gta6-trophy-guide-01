@@ -12,7 +12,7 @@
 // Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output.
 // Serve the guide itself with `node serve.ts` (http://localhost:8080).
 
-import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
@@ -20,43 +20,72 @@ import { buildDossier } from './vendor/makefun-frontend.ts';
 const repoRoot = fileURLToPath(new URL('.', import.meta.url));
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-// The entry is not handable-in without these two: the page itself and
-// the trophy file the gate checks for all 55 names and guides.
-for (const needed of ['app/index.html', 'app/data/trophies.json']) {
-  if (!existsSync(join(repoRoot, needed)) || !statSync(join(repoRoot, needed)).isFile()) {
-    throw new Error(`missing required file: ${needed}`);
+function fail(message) {
+  throw new Error(message);
+}
+
+function requireFile(rel) {
+  const path = join(repoRoot, rel);
+  if (!existsSync(path) || !statSync(path).isFile()) fail(`missing required file: ${rel}`);
+  return path;
+}
+
+function loadTrophies() {
+  const path = requireFile('app/data/trophies.json');
+  const doc = JSON.parse(readFileSync(path, 'utf8'));
+  const list = Array.isArray(doc) ? doc : doc.trophies;
+  if (!Array.isArray(list) || list.length < 55) {
+    fail(`trophies.json names ${Array.isArray(list) ? list.length : 0} trophies, expected at least 55`);
   }
+  return list;
 }
 
 // Fail fast, here, if the trophy file does not name all 55 trophies with
 // a non-blank guide each — the gate would refuse the entry for it, and a
 // clear message here beats a silent rejection there.
-const trophyDoc = JSON.parse(readFileSync(join(repoRoot, 'app/data/trophies.json'), 'utf8'));
-const trophyList = Array.isArray(trophyDoc) ? trophyDoc : trophyDoc.trophies;
-if (!Array.isArray(trophyList) || trophyList.length < 55) {
-  throw new Error(`trophies.json names ${Array.isArray(trophyList) ? trophyList.length : 0} trophies, expected at least 55`);
-}
-const unguided = trophyList.filter((t) => !t || typeof t.name !== 'string' || !t.name.trim() || typeof t.guide !== 'string' || !t.guide.trim());
-if (unguided.length > 0) {
-  throw new Error(`trophies.json has ${unguided.length} trophies with no name or no guide`);
+function checkGuides(list) {
+  const bad = list.filter((t) => {
+    if (!t || typeof t.name !== 'string' || !t.name.trim()) return true;
+    return typeof t.guide !== 'string' || !t.guide.trim();
+  });
+  if (bad.length > 0) fail(`trophies.json has ${bad.length} trophies with no name or no guide`);
 }
 
-mkdirSync(outDir, { recursive: true });
-cpSync(join(repoRoot, 'app'), join(outDir, 'app'), { recursive: true });
-mkdirSync(join(outDir, 'screenshots'), { recursive: true });
-if (existsSync(join(repoRoot, 'screenshots'))) {
-  cpSync(join(repoRoot, 'screenshots'), join(outDir, 'screenshots'), { recursive: true });
+function checkScreenshots() {
+  const dir = join(repoRoot, 'screenshots');
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) fail('missing screenshots/ folder');
+  const shots = readdirSync(dir).filter((f) => !f.startsWith('.') && statSync(join(dir, f)).isFile());
+  if (shots.length < 3 || shots.length > 4) {
+    fail(`screenshots/ holds ${shots.length} images, expected 3 or 4`);
+  }
+  return shots;
 }
 
-// The scorer's own caps: at most 4 screenshots of 256 KiB each, app/ at
-// most 993 files and directories and 48 MiB in all. buildDossier refuses
-// anything past them, so a bad entry fails here instead of at the gate.
-writeFileSync(
-  join(outDir, 'dossier.json'),
-  buildDossier(outDir, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-  }),
-);
+function handIn() {
+  requireFile('app/index.html');
+  const list = loadTrophies();
+  checkGuides(list);
+  checkScreenshots();
+
+  mkdirSync(outDir, { recursive: true });
+  cpSync(join(repoRoot, 'app'), join(outDir, 'app'), { recursive: true });
+  mkdirSync(join(outDir, 'screenshots'), { recursive: true });
+  if (existsSync(join(repoRoot, 'screenshots'))) {
+    cpSync(join(repoRoot, 'screenshots'), join(outDir, 'screenshots'), { recursive: true });
+  }
+
+  // The scorer's own caps: at most 4 screenshots of 256 KiB each, app/ at
+  // most 993 files and directories and 48 MiB in all. buildDossier refuses
+  // anything past them, so a bad entry fails here instead of at the gate.
+  writeFileSync(
+    join(outDir, 'dossier.json'),
+    buildDossier(outDir, {
+      text_max_bytes: 163840,
+      screenshots: { max: 4, max_bytes: 262144 },
+      app_max_files: 993,
+      app_max_bytes: 50331648,
+    }),
+  );
+}
+
+handIn();

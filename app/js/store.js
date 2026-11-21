@@ -1,58 +1,77 @@
-// Progress, notes and settings for Leonida Platinum.
-// Everything lives in localStorage on the reader's own browser; nothing
-// is sent anywhere. Export writes one JSON file; import reads one back.
+// Leonida Platinum — saved progress, notes and settings.
+// The reader's checklist lives in their own browser's localStorage.
+// Nothing here is sent anywhere. Export writes one JSON file that
+// import can read back; a bare array of earned ids is accepted too,
+// so an older or hand-made export still loads.
 
-export const PROGRESS_KEY = 'leonida-platinum-progress-v1';
-export const NOTES_KEY = 'leonida-platinum-notes-v1';
-export const SETTINGS_KEY = 'leonida-platinum-settings-v1';
+const PROGRESS_KEY = 'leonida-platinum-progress-v1';
+const NOTES_KEY = 'leonida-platinum-notes-v1';
+const SETTINGS_KEY = 'leonida-platinum-settings-v1';
 
-export function loadProgress() {
+function jsonGet(key, fallback) {
   try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
-    const ids = raw ? JSON.parse(raw) : [];
-    return new Set(Array.isArray(ids) ? ids.filter((n) => Number.isInteger(n)) : []);
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
   } catch {
-    return new Set();
+    return fallback;
   }
 }
 
-export function saveProgress(earned) {
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify([...earned].sort((a, b) => a - b)));
+function jsonSet(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function loadNotes() {
-  try {
-    const raw = localStorage.getItem(NOTES_KEY);
-    const obj = raw ? JSON.parse(raw) : {};
-    return typeof obj === 'object' && obj !== null ? obj : {};
-  } catch {
-    return {};
+function asIdList(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((n) => Number.isInteger(n));
+}
+
+export function getProgress() {
+  return new Set(asIdList(jsonGet(PROGRESS_KEY, [])));
+}
+
+export function setProgress(earned) {
+  const ids = [...earned].sort((a, b) => a - b);
+  jsonSet(PROGRESS_KEY, ids);
+}
+
+export function getNotes() {
+  const notes = jsonGet(NOTES_KEY, {});
+  return notes && typeof notes === 'object' ? notes : {};
+}
+
+export function setNote(id, text) {
+  const notes = getNotes();
+  if (text.trim() === '') {
+    delete notes[id];
+  } else {
+    notes[id] = text;
   }
+  jsonSet(NOTES_KEY, notes);
 }
 
-export function saveNote(id, text) {
-  const notes = loadNotes();
-  if (text.trim() === '') delete notes[id];
-  else notes[id] = text;
-  localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+export function clearNotes() {
+  jsonSet(NOTES_KEY, {});
 }
 
-export function loadSettings() {
-  const defaults = { spoiler: false, theme: 'paper', kind: 'all', grade: 'all', hideEarned: false };
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return defaults;
-    return { ...defaults, ...JSON.parse(raw) };
-  } catch {
-    return defaults;
-  }
+export function getPrefs() {
+  const defaults = {
+    spoiler: false,
+    theme: 'paper',
+    kind: 'all',
+    grade: 'all',
+    hideEarned: false,
+  };
+  const saved = jsonGet(SETTINGS_KEY, null);
+  if (!saved || typeof saved !== 'object') return defaults;
+  return { ...defaults, ...saved };
 }
 
-export function saveSettings(settings) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+export function setPrefs(prefs) {
+  jsonSet(SETTINGS_KEY, prefs);
 }
 
-export function exportFile(progress, notes) {
+export function downloadExport(progress, notes) {
   const payload = {
     app: 'leonida-platinum',
     version: 1,
@@ -62,20 +81,21 @@ export function exportFile(progress, notes) {
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'leonida-platinum-progress.json';
-  a.click();
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'leonida-platinum-progress.json';
+  link.click();
   URL.revokeObjectURL(url);
 }
 
-export function parseImportFile(text) {
+export function readExport(text) {
   const data = JSON.parse(text);
-  // Accept our own export shape, or a bare array of earned trophy ids.
-  if (Array.isArray(data)) return { earned: new Set(data.filter(Number.isInteger)), notes: {} };
+  if (Array.isArray(data)) {
+    return { earned: new Set(asIdList(data)), notes: {} };
+  }
   if (data && Array.isArray(data.earned)) {
     const notes = data.notes && typeof data.notes === 'object' ? data.notes : {};
-    return { earned: new Set(data.earned.filter(Number.isInteger)), notes };
+    return { earned: new Set(asIdList(data.earned)), notes };
   }
   throw new Error('Not a Leonida Platinum progress file.');
 }

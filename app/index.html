@@ -7,25 +7,25 @@
 <link rel="stylesheet" href="css/base.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark" aria-hidden="true">LP</div>
+<header class="masthead">
+  <div class="wordmark">
+    <div class="mark" aria-hidden="true">LP</div>
     <div>
       <h1>Leonida Platinum</h1>
-      <p class="subtitle">GTA VI trophy guide &amp; tracker — all 55 PlayStation 5 trophies, offline</p>
+      <p class="tagline">GTA VI trophy guide &amp; tracker — all 55 PlayStation 5 trophies, offline</p>
     </div>
   </div>
-  <div class="progress-block" id="progress-block">
-    <div class="progress-count"><span id="earned-count">0</span><span class="of"> / 55</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    <p class="progress-note" id="progress-note">0% to the platinum</p>
-    <p class="grade-counts" id="grade-counts"></p>
+  <div class="progress" id="progress-block">
+    <div class="count"><span id="earned-count">0</span><span class="of"> / 55</span></div>
+    <div class="meter"><div class="meter-fill" id="progress-fill"></div></div>
+    <p class="note" id="progress-note">0% to the platinum</p>
+    <p class="grades" id="grade-counts"></p>
   </div>
 </header>
 
-<div class="toolbar" role="search">
+<div class="controls" role="search">
   <input id="search" type="search" placeholder="Search trophies by name…" aria-label="Search trophies">
-  <div class="chips" id="kind-chips" role="group" aria-label="Filter by kind"></div>
+  <div class="kind-chips" id="kind-chips" role="group" aria-label="Filter by kind"></div>
   <select id="grade-filter" aria-label="Filter by grade">
     <option value="all">All grades</option>
     <option value="platinum">Platinum</option>
@@ -33,16 +33,16 @@
     <option value="silver">Silver</option>
     <option value="bronze">Bronze</option>
   </select>
-  <label class="toggle"><input type="checkbox" id="spoiler-toggle"> Hide story spoilers</label>
-  <label class="toggle"><input type="checkbox" id="hide-earned-toggle"> Hide earned</label>
+  <label class="switch"><input type="checkbox" id="spoiler-toggle"> Hide story spoilers</label>
+  <label class="switch"><input type="checkbox" id="hide-earned-toggle"> Hide earned</label>
   <button id="theme-toggle" type="button" title="Switch paper / night theme">Night</button>
   <button id="export-btn" type="button">Export</button>
   <button id="import-btn" type="button">Import</button>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
-  <button id="reset-btn" type="button" class="danger">Reset</button>
+  <button id="reset-btn" type="button" class="risky">Reset</button>
 </div>
 
-<nav class="tabs" aria-label="Views">
+<nav class="views-nav" aria-label="Views">
   <button data-view="checklist" class="active" type="button">Checklist</button>
   <button data-view="roadmap" type="button">Roadmap</button>
   <button data-view="missables" type="button">Missables</button>
@@ -50,22 +50,22 @@
 </nav>
 
 <main>
-  <section id="view-checklist" class="view active" aria-label="Trophy checklist">
-    <div class="checklist-layout">
-      <div class="list-col">
-        <p class="list-meta" id="list-meta"></p>
-        <ul class="trophy-list" id="trophy-list"></ul>
+  <section id="view-checklist" class="pane active" aria-label="Trophy checklist">
+    <div class="split">
+      <div class="list-side">
+        <p class="list-count" id="list-meta"></p>
+        <ul class="trophies" id="trophy-list"></ul>
       </div>
-      <aside class="detail-pane" id="detail-pane" aria-label="Trophy guide"></aside>
+      <aside class="guide-pane" id="guide-pane" aria-label="Trophy guide"></aside>
     </div>
   </section>
-  <section id="view-roadmap" class="view" aria-label="Roadmap to the platinum">
+  <section id="view-roadmap" class="pane" aria-label="Roadmap to the platinum">
     <div id="roadmap-view"></div>
   </section>
-  <section id="view-missables" class="view" aria-label="Missable trophies">
+  <section id="view-missables" class="pane" aria-label="Missable trophies">
     <div id="missables-view"></div>
   </section>
-  <section id="view-planner" class="view" aria-label="Next-up planner">
+  <section id="view-planner" class="pane" aria-label="Next-up planner">
     <div id="planner-view"></div>
   </section>
 </main>
@@ -73,7 +73,7 @@
 <footer>
   <p><strong>Sources.</strong> Trophy names, descriptions and grades: the official PlayStation 5 list as published on Exophase and PSNProfiles. How-to steps: PowerPyx, <em>GTA 6 Trophy Guide &amp; Roadmap</em> (18 Nov 2026); hidden-trophy split and the missable warning corroborated by CryptoGames, <em>GTA 6 Trophies and Achievements</em> (19 Nov 2026) and GTABase. Every guide here is written for this entry in our own words — sources are cited, never copied.</p>
   <p><strong>Honest gaps.</strong> Five trophies have no confirmed unlock method at launch (In The Beginning…, Capital Offense, Bad Luck, I Guess, The Truth Is Out There, Ten Pin). Their guides say so instead of guessing. Difficulty 4/10, about 200 hours to the platinum (PowerPyx). No online trophies; no difficulty settings; no mission replay — keep a manual save at the start of every chapter. Cheats disable trophies and saving.</p>
-  <p class="fineprint">Leonida Platinum is an original, offline, open-source guide. It is not affiliated with Rockstar Games and shows no Rockstar logo, artwork or game screenshots. Progress is saved only in this browser (localStorage); export and import move it as a file.</p>
+  <p class="smallprint">Leonida Platinum is an original, offline, open-source guide. It is not affiliated with Rockstar Games and shows no Rockstar logo, artwork or game screenshots. Progress is saved only in this browser (localStorage); export and import move it as a file.</p>
 </footer>
 
 <script type="module" src="js/main.js"></script>
