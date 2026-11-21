@@ -26,13 +26,25 @@ const KIND_MATCH = {
   online: () => false,
 };
 
-export function filterTrophies(trophies, { kind, grade, query }) {
+export function filterTrophies(trophies, { kind, grade, query, hideEarned, earned }) {
   const q = query.trim().toLowerCase();
   return trophies.filter((t) => {
     if (kind !== 'all' && !KIND_MATCH[kind](t)) return false;
     if (grade !== 'all' && t.grade !== grade) return false;
+    if (hideEarned && earned && earned.has(t.id)) return false;
     if (q && !`${t.name} ${t.description}`.toLowerCase().includes(q)) return false;
     return true;
+  });
+}
+
+// Per-grade earned counts for the header line: "Platinum 0/1 · Gold 0/2 …"
+const GRADE_LABEL = { platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
+
+export function gradeCounts(trophies, earned) {
+  return ['platinum', 'gold', 'silver', 'bronze'].map((g) => {
+    const all = trophies.filter((t) => t.grade === g);
+    const done = all.filter((t) => earned.has(t.id)).length;
+    return `${GRADE_LABEL[g]} ${done}/${all.length}`;
   });
 }
 

@@ -12,7 +12,7 @@
 // Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output.
 // Serve the guide itself with `node serve.ts` (http://localhost:8080).
 
-import { cpSync, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
@@ -26,6 +26,19 @@ for (const needed of ['app/index.html', 'app/data/trophies.json']) {
   if (!existsSync(join(repoRoot, needed)) || !statSync(join(repoRoot, needed)).isFile()) {
     throw new Error(`missing required file: ${needed}`);
   }
+}
+
+// Fail fast, here, if the trophy file does not name all 55 trophies with
+// a non-blank guide each — the gate would refuse the entry for it, and a
+// clear message here beats a silent rejection there.
+const trophyDoc = JSON.parse(readFileSync(join(repoRoot, 'app/data/trophies.json'), 'utf8'));
+const trophyList = Array.isArray(trophyDoc) ? trophyDoc : trophyDoc.trophies;
+if (!Array.isArray(trophyList) || trophyList.length < 55) {
+  throw new Error(`trophies.json names ${Array.isArray(trophyList) ? trophyList.length : 0} trophies, expected at least 55`);
+}
+const unguided = trophyList.filter((t) => !t || typeof t.name !== 'string' || !t.name.trim() || typeof t.guide !== 'string' || !t.guide.trim());
+if (unguided.length > 0) {
+  throw new Error(`trophies.json has ${unguided.length} trophies with no name or no guide`);
 }
 
 mkdirSync(outDir, { recursive: true });

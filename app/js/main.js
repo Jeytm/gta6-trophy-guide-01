@@ -4,7 +4,7 @@
 // toolbar, tabs and detail pane. A ?demo=… parameter seeds a fixed
 // 13-of-55 progress set for screenshots only; normal visits never seed.
 
-import { filterTrophies } from './filters.js';
+import { filterTrophies, gradeCounts } from './filters.js';
 import {
   renderChips, renderList, renderDetail, renderRoadmap, renderMissables, renderPlanner,
 } from './views.js';
@@ -30,11 +30,11 @@ const state = {
 const $ = (id) => document.getElementById(id);
 const els = {
   search: $('search'), chips: $('kind-chips'), grade: $('grade-filter'),
-  spoiler: $('spoiler-toggle'), theme: $('theme-toggle'),
+  spoiler: $('spoiler-toggle'), hideEarned: $('hide-earned-toggle'), theme: $('theme-toggle'),
   exportBtn: $('export-btn'), importBtn: $('import-btn'), importFile: $('import-file'),
   resetBtn: $('reset-btn'), list: $('trophy-list'), meta: $('list-meta'),
   pane: $('detail-pane'), earnedCount: $('earned-count'),
-  fill: $('progress-fill'), note: $('progress-note'),
+  fill: $('progress-fill'), note: $('progress-note'), gradeCounts: $('grade-counts'),
 };
 
 function currentTrophy() {
@@ -46,6 +46,8 @@ function visibleTrophies() {
     kind: state.settings.kind,
     grade: state.settings.grade,
     query: state.query,
+    hideEarned: state.settings.hideEarned,
+    earned: state.earned,
   });
 }
 
@@ -56,6 +58,7 @@ function renderAll() {
   els.note.textContent = earned.size === trophies.length
     ? 'Platinum earned — you are a Leonida Legend.'
     : `${Math.round((earned.size / trophies.length) * 100)}% to the platinum`;
+  els.gradeCounts.textContent = gradeCounts(trophies, earned).join(' · ');
   renderChips(els.chips, state.settings.kind, (kind) => {
     state.settings.kind = kind;
     saveSettings(state.settings);
@@ -63,6 +66,7 @@ function renderAll() {
   });
   els.grade.value = state.settings.grade;
   els.spoiler.checked = state.settings.spoiler;
+  els.hideEarned.checked = state.settings.hideEarned;
   els.theme.textContent = state.settings.theme === 'night' ? 'Paper' : 'Night';
   document.documentElement.setAttribute('data-theme', state.settings.theme);
   renderList(els.list, els.meta, visibleTrophies(), {
@@ -115,6 +119,11 @@ els.grade.addEventListener('change', () => {
 });
 els.spoiler.addEventListener('change', () => {
   state.settings.spoiler = els.spoiler.checked;
+  saveSettings(state.settings);
+  renderAll();
+});
+els.hideEarned.addEventListener('change', () => {
+  state.settings.hideEarned = els.hideEarned.checked;
   saveSettings(state.settings);
   renderAll();
 });

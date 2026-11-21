@@ -38,7 +38,7 @@ export function saveNote(id, text) {
 }
 
 export function loadSettings() {
-  const defaults = { spoiler: false, theme: 'paper', kind: 'all', grade: 'all' };
+  const defaults = { spoiler: false, theme: 'paper', kind: 'all', grade: 'all', hideEarned: false };
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return defaults;

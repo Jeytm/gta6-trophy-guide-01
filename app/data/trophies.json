@@ -306,7 +306,7 @@
       "stage": 2,
       "target": "Finish Andy's 5-quest chain (Lucia only, Chapter 3)",
       "guide": "Andy's optional questline is Lucia-only and gets marked automatically in Chapter 3: she calls, then texts her home address in Belville. Finish her 5 quests — Climbing the Cellerichain (parts 1–3), Pay the Cellerica Fee, Peach!, Read the Label and Puff Puff Pass — and the trophy pops after the last one. PowerPyx says the quests stay available after the story, but start the chain when it unlocks to be safe: one guide warns stranger chains can have windows tied to story progress.",
-      "sources": ["Exophase — official trophy list (name, description, grade)", "PowerPyx — GTA 6 Trophy Guide & Roadmap, 18 Nov 2026 (Andy's 5 quests, Chapter 3, Lucia only)", "CryptoGames — GTA 6 Trophies, 19 Nov 2026 (TechWiser window warning, single source)"],
+      "sources": ["Exophase — official trophy list (name, description, grade)", "PowerPyx — GTA 6 Trophy Guide & Roadmap, 18 Nov 2026 (Andy's 5 quests, Chapter 3, Lucia only)", "CryptoGames — GTA 6 Trophies, 19 Nov 2026 (stranger-chain window warning, single source)"],
       "steps": ["Play as Lucia in Chapter 3 until Andy calls", "Follow her text to Belville", "Complete all 5 Andy quests in order"]
     },
     {
@@ -448,7 +448,7 @@
       "target": "Complete 50 of 80 challenges",
       "guide": "Complete any 50 of the 80 challenges. The 100% checklist wants 70, so this pops on the way there. Track them under Progress > Challenges — most complete naturally while working on the other trophies, so save this for late and then pick the easiest remaining ones.",
       "sources": ["Exophase — official trophy list (name, description, grade)", "PowerPyx — GTA 6 Trophy Guide & Roadmap, 18 Nov 2026 (80 challenges; 70 for 100%)"],
-      "steps": ["Open Progress > Challenges to see what's done", "Let most complete naturally during other trophies", "Late in the run, pick the 10 easiest unfinished challenges"]
+      "steps": ["Open Progress > Challenges to see what's done", "Let most complete naturally during other trophies", "Late in the run, pick the easiest unfinished challenges until 50 are done"]
     },
     {
       "id": 33,

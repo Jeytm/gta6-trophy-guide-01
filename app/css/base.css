@@ -72,6 +72,7 @@ h1, h2, h3, .serif { font-family: Georgia, "Times New Roman", serif; }
 }
 .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.3s; }
 .progress-note { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.grade-counts { margin: 2px 0 0; color: var(--muted); font-size: 11px; }
 
 .toolbar {
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -110,11 +111,11 @@ main { padding: 16px 24px 8px; }
 .checklist-layout { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 16px; align-items: start; }
 .list-meta { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
 
-.trophy-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.trophy-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
 .trophy-row {
   display: flex; gap: 10px; align-items: flex-start;
   background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-  padding: 9px 12px; cursor: pointer; box-shadow: var(--shadow);
+  padding: 8px 12px; cursor: pointer; box-shadow: var(--shadow);
 }
 .trophy-row:hover { border-color: var(--accent); }
 .trophy-row.selected { border-color: var(--accent); outline: 2px solid var(--accent-soft); }
@@ -144,7 +145,7 @@ main { padding: 16px 24px 8px; }
 .detail-pane {
   position: sticky; top: 12px;
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 16px; box-shadow: var(--shadow);
+  padding: 14px 16px; box-shadow: var(--shadow);
 }
 .detail-pane h2 { margin: 0 0 2px; font-size: 21px; }
 .detail-grade { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
@@ -153,7 +154,7 @@ main { padding: 16px 24px 8px; }
   padding: 8px 10px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 0 0 10px;
 }
 .detail-pane p.guide { margin: 0 0 10px; font-size: 14px; }
-.detail-pane h3 { margin: 14px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+.detail-pane h3 { margin: 10px 0 5px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 .detail-pane ol.steps { margin: 0; padding-left: 20px; font-size: 14px; }
 .detail-pane ol.steps li { margin-bottom: 4px; }
 .detail-pane ul.sources { margin: 0; padding-left: 18px; font-size: 12px; color: var(--muted); }
@@ -172,11 +173,11 @@ main { padding: 16px 24px 8px; }
 
 .stage-card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow);
+  padding: 11px 16px; margin-bottom: 10px; box-shadow: var(--shadow);
 }
 .stage-card h2 { margin: 0 0 2px; font-size: 19px; }
 .stage-card h2 .stage-time { color: var(--muted); font-size: 13px; font-family: sans-serif; font-weight: 400; }
-.stage-card p { margin: 4px 0 10px; color: var(--muted); font-size: 13px; }
+.stage-card p { margin: 3px 0 8px; color: var(--muted); font-size: 13px; }
 .stage-trophies { display: flex; flex-wrap: wrap; gap: 6px; }
 .stage-chip {
   display: inline-flex; gap: 6px; align-items: center;
@@ -188,7 +189,7 @@ main { padding: 16px 24px 8px; }
 
 .nextup-strip {
   background: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius);
-  padding: 12px 16px; margin-bottom: 14px;
+  padding: 10px 16px; margin-bottom: 12px;
 }
 .nextup-strip h2 { margin: 0 0 6px; font-size: 17px; }
 .nextup-strip ol { margin: 0; padding-left: 20px; font-size: 14px; }
@@ -196,8 +197,12 @@ main { padding: 16px 24px 8px; }
 
 .miss-card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow);
+  padding: 12px 16px; margin-bottom: 12px; box-shadow: var(--shadow);
 }
+/* The two lower missables cards sit side by side so all three cards
+   fit on one screen at 1280x800. */
+.miss-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+.miss-grid .miss-card { margin-bottom: 0; }
 .miss-card.alert { border-color: var(--warn); background: var(--warn-bg); }
 .miss-card h2 { margin: 0 0 6px; font-size: 18px; }
 .miss-card p { margin: 4px 0; font-size: 14px; }

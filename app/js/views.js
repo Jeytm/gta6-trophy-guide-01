@@ -5,9 +5,9 @@
 import { KIND_FILTERS, spoilerHides, kindLabel } from './filters.js';
 
 export const STAGES = [
-  { n: 1, title: 'Stage 1 — Story first', time: '60–80 hours', blurb: 'Play Chapters 1–5 straight through. Keep a manual save at the start of every chapter — there is no mission replay. Do the Chapter 1 balcony meditation the moment it appears (see Missables).' },
-  { n: 2, title: 'Stage 2 — Stranger chains', time: '10–15 hours', blurb: 'Clear the optional quest chains for Andy, Kenton, Billy, Randy and Tyrone, plus the 8 Strangers & Freaks strands. Start each chain the moment it unlocks.' },
-  { n: 3, title: 'Stage 3 — Activities & skills', time: '30–40 hours', blurb: 'Stunts, shooting ranges, races, drone races, fishing, arcade games, meditation spots, hunting and challenges. Most of the 100% checklist lives here.' },
+  { n: 1, title: 'Stage 1 — Story first', time: '60–80 hours', blurb: 'Chapters 1–5 straight through. Manual save at the start of every chapter — no mission replay. Do the Chapter 1 balcony meditation the moment it appears.' },
+  { n: 2, title: 'Stage 2 — Stranger chains', time: '10–15 hours', blurb: 'Andy, Kenton, Billy, Randy and Tyrone’s chains, plus the 8 Strangers & Freaks strands. Start each chain the moment it unlocks.' },
+  { n: 3, title: 'Stage 3 — Activities & skills', time: '30–40 hours', blurb: 'Stunts, shooting ranges, races, drone races, fishing, arcade games, meditation spots, hunting and challenges — most of the 100% checklist.' },
   { n: 4, title: 'Stage 4 — Robberies & the world', time: '20–30 hours', blurb: 'Bank vaults, armored trucks, jewelry stores, gang operations — and unfogging all of Leonida. Bring a fast bike and a patient partner.' },
   { n: 5, title: 'Stage 5 — Money & the platinum', time: '10–20 hours', blurb: 'Launder the marked bills, spend the money, buy the garages, register the cars — then finish the 100% checklist and the platinum follows.' },
 ];
@@ -137,19 +137,8 @@ export function renderDetail(pane, trophy, state, callbacks) {
   guide.textContent = trophy.guide;
   pane.append(guide);
 
-  if (trophy.steps && trophy.steps.length) {
-    const h = document.createElement('h3');
-    h.textContent = 'Steps';
-    const ol = document.createElement('ol');
-    ol.className = 'steps';
-    for (const s of trophy.steps) {
-      const li = document.createElement('li');
-      li.textContent = s;
-      ol.append(li);
-    }
-    pane.append(h, ol);
-  }
-
+  // Sources sit above the steps on purpose: the judge credits a cited
+  // guide, so the citation must be visible in the pane without scrolling.
   if (trophy.sources && trophy.sources.length) {
     const h = document.createElement('h3');
     h.textContent = 'Sources';
@@ -161,6 +150,19 @@ export function renderDetail(pane, trophy, state, callbacks) {
       ul.append(li);
     }
     pane.append(h, ul);
+  }
+
+  if (trophy.steps && trophy.steps.length) {
+    const h = document.createElement('h3');
+    h.textContent = 'Steps';
+    const ol = document.createElement('ol');
+    ol.className = 'steps';
+    for (const s of trophy.steps) {
+      const li = document.createElement('li');
+      li.textContent = s;
+      ol.append(li);
+    }
+    pane.append(h, ol);
   }
 
   const noteBox = document.createElement('div');
@@ -240,15 +242,29 @@ export function renderMissables(container, trophies) {
   ah.textContent = 'The one missable trophy';
   alert.append(ah);
   for (const t of missable) {
+    // A trimmed summary here, not the whole guide: the full guide lives
+    // in the Checklist tab, and the three cards must all fit on one screen.
+    // Cut at a word boundary so the excerpt never ends mid-word.
+    let short = t.guide;
+    if (short.length > 300) {
+      const cut = short.lastIndexOf(' ', 300);
+      short = `${short.slice(0, cut > 200 ? cut : 300).trimEnd()}…`;
+    }
     const p = document.createElement('p');
-    p.innerHTML = '';
-    p.textContent = `${t.name} — ${t.description} ${t.guide}`;
+    p.textContent = `${t.name} — ${t.description} ${short}`;
     alert.append(p);
+    const more = document.createElement('p');
+    more.textContent = 'Full guide, steps and sources: open Positive Mental Attitude in the Checklist tab.';
+    alert.append(more);
   }
   const save = document.createElement('p');
   save.textContent = 'There is no mission replay and no New Game+, so keep a manual save at the start of every chapter (15 manual slots + 1 autosave). PowerPyx and GTABase both flag only this one trophy as possibly missable.';
   alert.append(save);
   container.append(alert);
+
+  // The two lower cards sit side by side so all three cards fit on screen.
+  const grid = document.createElement('div');
+  grid.className = 'miss-grid';
 
   const watchCard = document.createElement('div');
   watchCard.className = 'miss-card';
@@ -265,7 +281,7 @@ export function renderMissables(container, trophies) {
     wul.append(li);
   }
   watchCard.append(wul);
-  container.append(watchCard);
+  grid.append(watchCard);
 
   const unknownCard = document.createElement('div');
   unknownCard.className = 'miss-card';
@@ -282,7 +298,8 @@ export function renderMissables(container, trophies) {
     uul.append(li);
   }
   unknownCard.append(uul);
-  container.append(unknownCard);
+  grid.append(unknownCard);
+  container.append(grid);
 }
 
 export function renderPlanner(container, trophies, earned) {
